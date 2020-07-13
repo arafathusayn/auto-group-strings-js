@@ -32,5 +32,8 @@
   "bugs": {
     "url": "https://github.com/arafathusayn/auto-group-strings-js/issues"
   },
-  "homepage": "https://github.com/arafathusayn/auto-group-strings-js#readme"
+  "homepage": "https://github.com/arafathusayn/auto-group-strings-js#readme",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/@arafathusayn"
+  }
 }
