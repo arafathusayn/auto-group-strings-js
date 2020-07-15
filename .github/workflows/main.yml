@@ -19,9 +19,6 @@ jobs:
       - name: npm install
         run: npm install
       
-      - name: Cache
-        uses: actions/cache@v2.0.0
-      
       - name: npm run coverage
         run: npm run coverage
       
