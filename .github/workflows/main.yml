@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: setup node.js environment
+      uses: actions/setup-node@v2
+    - name: npm install
+      run: npm install
+    - name: Cache
+      uses: actions/cache@v2
+    - name: npm run coverage
+      run: npm run coverage
+    - name: codecov
+      uses: codecov/codecov-action@v1
