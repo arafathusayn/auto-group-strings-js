@@ -187,4 +187,48 @@ describe("auto-group-strings", () => {
 
     expect(result instanceof Array).toBe(true);
   });
+
+  test("matches sequentially", () => {
+    const addresses = [
+      "Block, 5th, Aviation Road", // 0
+      "Block, 5th, Aviation Road", // 1
+      "Block, 4th, Aviation Road", // 2
+      "Block, 10th, Aviation Road", // 3
+      "Block, 10th, Aviation Road", // 4
+      "Block, 3rd, Aviation Road", // 5
+      "Block, 10th, Aviation Road", // 6
+      "Block, 10th, Aviation Road", // 7
+      "Block, 6th, Aviation Road", // 8
+      "Block, 2nd, Aviation Road", // 9
+    ];
+
+    const result1 = autoGroupStrings(addresses, { delimiter: ", " });
+
+    expect(result1).toStrictEqual([
+      {
+        common: "Aviation Road",
+        members: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+      },
+      { common: "5th, Aviation Road", members: [0, 1] },
+      { common: "Block, 5th, Aviation Road", members: [0, 1] },
+      { common: "10th, Aviation Road", members: [3, 4, 6, 7] },
+      { common: "Block, 10th, Aviation Road", members: [3, 4, 6, 7] },
+    ]);
+
+    const result2 = autoGroupStrings(addresses, {
+      delimiter: ", ",
+      direction: "ltr",
+    });
+
+    expect(result2).toStrictEqual([
+      {
+        common: "Block",
+        members: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+      },
+      { common: "Block, 5th", members: [0, 1] },
+      { common: "Block, 5th, Aviation Road", members: [0, 1] },
+      { common: "Block, 10th", members: [3, 4, 6, 7] },
+      { common: "Block, 10th, Aviation Road", members: [3, 4, 6, 7] },
+    ]);
+  });
 });

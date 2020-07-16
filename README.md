@@ -1,6 +1,6 @@
 # auto-group-strings
 
-[![](https://github.com/arafathusayn/auto-group-strings-js/workflows/test/badge.svg)](https://github.com/arafathusayn/auto-group-strings-js/actions?query=workflow%3Atest) [![](https://img.shields.io/codecov/c/github/arafathusayn/auto-group-strings-js/master)](https://codecov.io/github/arafathusayn/auto-group-strings-js?branch=master) [![](https://badge.fury.io/js/auto-group-strings.svg)](https://www.npmjs.com/package/auto-group-strings) [![](https://snyk.io/test/github/arafathusayn/auto-group-strings-js/badge.svg)](https://snyk.io/test/github/arafathusayn/auto-group-strings-js) 
+[![](https://github.com/arafathusayn/auto-group-strings-js/workflows/test/badge.svg)](https://github.com/arafathusayn/auto-group-strings-js/actions?query=workflow%3Atest) [![](https://img.shields.io/codecov/c/github/arafathusayn/auto-group-strings-js/master)](https://codecov.io/github/arafathusayn/auto-group-strings-js?branch=master) [![](https://snyk.io/test/github/arafathusayn/auto-group-strings-js/badge.svg)](https://snyk.io/test/github/arafathusayn/auto-group-strings-js) 
 
 Small JS library to group array of strings by common substring
 
