@@ -10,6 +10,9 @@
     "test": "jest --config jestconfig.json",
     "coverage": "jest --config jestconfig.json --coverage"
   },
+  "engines": {
+    "node": ">=12"
+  },
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/arafathusayn/auto-group-strings-js.git"
