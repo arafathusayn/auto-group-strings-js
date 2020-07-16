@@ -41,9 +41,16 @@ const autoGroupStrings = (inputStrings, { delimiter, direction, caseSensitive, }
                         continue;
                     }
                     if (caseSensitive === true
-                        ? output[index].prevWords[l][k] === words[k]
-                        : output[index].prevWords[l][k].toLowerCase() ===
-                            words[k].toLowerCase()) {
+                        ? output[index].prevWords[l].slice(0, k + 1).join(delimiter) ===
+                            words.slice(0, k + 1).join(delimiter)
+                        : output[index].prevWords[l]
+                            .slice(0, k + 1)
+                            .join(delimiter)
+                            .toLowerCase() ===
+                            words
+                                .slice(0, k + 1)
+                                .join(delimiter)
+                                .toLowerCase()) {
                         output.push({
                             common: words[k] +
                                 delimiter +
@@ -83,9 +90,16 @@ const autoGroupStrings = (inputStrings, { delimiter, direction, caseSensitive, }
                         continue;
                     }
                     if (caseSensitive === true
-                        ? output[index].prevWords[l][k] === words[k]
-                        : output[index].prevWords[l][k].toLowerCase() ===
-                            words[k].toLowerCase()) {
+                        ? output[index].prevWords[l].slice(0, k + 1).join(delimiter) ===
+                            words.slice(0, k + 1).join(delimiter)
+                        : output[index].prevWords[l]
+                            .slice(0, k + 1)
+                            .join(delimiter)
+                            .toLowerCase() ===
+                            words
+                                .slice(0, k + 1)
+                                .join(delimiter)
+                                .toLowerCase()) {
                         output.push({
                             common: words.slice(0, k).join(delimiter) + delimiter + words[k],
                             members: [
