@@ -1,6 +1,6 @@
 {
   "name": "auto-group-strings",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Small JS library to group array of strings by common substring",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
