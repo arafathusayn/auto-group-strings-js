@@ -287,4 +287,68 @@ describe("auto-group-strings", () => {
       { common: "Block, 2nd, Aviation Road", members: [9] },
     ]);
   });
+
+  test("accept and apply optional delimiterRegExp of RegExp type", () => {
+    const animals = [
+      "Cat, Animal", // 0
+      "Cat, Animal", // 1
+      "Dog, Animal", // 2
+      "Monkey, Animal", // 3
+      "Monkey, Animal", // 4
+      "Tiger, Animal", // 5
+      "Monkey, Animal", // 6
+      "Monkey, Animal", // 7
+      "Lion, Animal", // 8
+      "Wolf, Animal", // 9
+      "Spider, Insect", // 10
+      "Butterfly, Insect", // 11
+      "Shark, Fish", // 12
+      "Fly, Insect", // 13
+      "Wolf, Animal", // 14
+      "Ant, Insect", // 15
+    ];
+
+    const result1 = autoGroupStrings(animals, {
+      delimiterRegExp: /, ?/, // using RegExp
+    });
+
+    expect(result1).toStrictEqual([
+      { common: "Animal", members: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 14] },
+      { common: "Cat, Animal", members: [0, 1] },
+      { common: "Monkey, Animal", members: [3, 4, 6, 7] },
+      { common: "Insect", members: [10, 11, 13, 15] },
+      { common: "Wolf, Animal", members: [9, 14] },
+    ]);
+
+    const result2 = autoGroupStrings(animals, {
+      delimiterRegExp: /<no matching regexp>/,
+      delimiter: ", ", // use provided string as fallback
+    });
+
+    expect(result2).toStrictEqual([
+      { common: "Animal", members: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 14] },
+      { common: "Cat, Animal", members: [0, 1] },
+      { common: "Monkey, Animal", members: [3, 4, 6, 7] },
+      { common: "Insect", members: [10, 11, 13, 15] },
+      { common: "Wolf, Animal", members: [9, 14] },
+    ]);
+
+    // direction left to right
+    const result3 = autoGroupStrings(
+      animals.map((x) => x.split(", ").reverse().join(", ")),
+      {
+        delimiterRegExp: /<no matching regexp>/,
+        delimiter: ", ", // use provided string as fallback
+        direction: "ltr",
+      },
+    );
+
+    expect(result3).toStrictEqual([
+      { common: "Animal", members: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 14] },
+      { common: "Animal, Cat", members: [0, 1] },
+      { common: "Animal, Monkey", members: [3, 4, 6, 7] },
+      { common: "Insect", members: [10, 11, 13, 15] },
+      { common: "Animal, Wolf", members: [9, 14] },
+    ]);
+  });
 });

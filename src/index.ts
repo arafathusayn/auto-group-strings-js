@@ -2,11 +2,13 @@ const autoGroupStrings = (
   inputStrings: string[],
   {
     delimiter,
+    delimiterRegExp,
     direction,
     caseSensitive,
     includeSingleElementMembers,
   }: {
     delimiter?: string;
+    delimiterRegExp?: RegExp;
     direction?: "ltr" | "rtl";
     caseSensitive?: boolean;
     includeSingleElementMembers?: boolean;
@@ -38,8 +40,21 @@ const autoGroupStrings = (
   }[] = [];
 
   for (let i = 0; i < len; i++) {
+    if (delimiterRegExp instanceof RegExp) {
+      const match = inputStrings[i].match(delimiterRegExp);
+
+      delimiter = (match && match[0]) || delimiter;
+    }
+
     if (direction === "rtl") {
-      const words = inputStrings[i].split(delimiter).slice().reverse();
+      let words = inputStrings[i]
+        .split(delimiterRegExp || delimiter)
+        .slice()
+        .reverse();
+
+      if (delimiterRegExp instanceof RegExp && words.length === 1) {
+        words = inputStrings[i].split(delimiter).slice().reverse();
+      }
 
       if (!output.find((x) => x.common === words[0])) {
         output.push({
@@ -100,7 +115,11 @@ const autoGroupStrings = (
       output[index].prevWords.push(words);
     } else {
       // code for ltr
-      const words = inputStrings[i].split(delimiter);
+      let words = inputStrings[i].split(delimiterRegExp || delimiter);
+
+      if (delimiterRegExp instanceof RegExp && words.length === 1) {
+        words = inputStrings[i].split(delimiter);
+      }
 
       if (!output.find((x) => x.common === words[0])) {
         output.push({
