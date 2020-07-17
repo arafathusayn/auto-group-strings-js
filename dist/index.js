@@ -1,9 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const autoGroupStrings = (inputStrings, { delimiter, direction, caseSensitive, } = {
+const autoGroupStrings = (inputStrings, { delimiter, delimiterRegExp, direction, caseSensitive, includeSingleElementMembers, } = {
     delimiter: " ",
     direction: "rtl",
     caseSensitive: false,
+    includeSingleElementMembers: false,
 }) => {
     if (typeof delimiter === "undefined") {
         delimiter = " ";
@@ -17,8 +18,18 @@ const autoGroupStrings = (inputStrings, { delimiter, direction, caseSensitive, }
     const len = inputStrings.length;
     let output = [];
     for (let i = 0; i < len; i++) {
+        if (delimiterRegExp instanceof RegExp) {
+            const match = inputStrings[i].match(delimiterRegExp);
+            delimiter = (match && match[0]) || delimiter;
+        }
         if (direction === "rtl") {
-            const words = inputStrings[i].split(delimiter).slice().reverse();
+            let words = inputStrings[i]
+                .split(delimiterRegExp || delimiter)
+                .slice()
+                .reverse();
+            if (delimiterRegExp instanceof RegExp && words.length === 1) {
+                words = inputStrings[i].split(delimiter).slice().reverse();
+            }
             if (!output.find((x) => x.common === words[0])) {
                 output.push({
                     common: words[0],
@@ -67,7 +78,10 @@ const autoGroupStrings = (inputStrings, { delimiter, direction, caseSensitive, }
         }
         else {
             // code for ltr
-            const words = inputStrings[i].split(delimiter);
+            let words = inputStrings[i].split(delimiterRegExp || delimiter);
+            if (delimiterRegExp instanceof RegExp && words.length === 1) {
+                words = inputStrings[i].split(delimiter);
+            }
             if (!output.find((x) => x.common === words[0])) {
                 output.push({
                     common: words[0],
@@ -114,17 +128,36 @@ const autoGroupStrings = (inputStrings, { delimiter, direction, caseSensitive, }
         }
     }
     let newOutput = [];
-    const uniqueArrayByCommon = Array.from(new Set(output.map((item) => item.common)));
-    for (const item of uniqueArrayByCommon) {
-        newOutput.push({
-            common: item,
-            members: Array.from(new Set(output
-                .filter((x) => x.common === item)
-                .map((x) => x.members)
-                .flat())),
-        });
+    let uniqueArrayByCommon;
+    if (includeSingleElementMembers === true) {
+        uniqueArrayByCommon = Array.from(new Set(output.map((item) => item.common).concat(inputStrings)));
     }
-    newOutput = newOutput.filter((x) => x.members.length > 1);
+    else {
+        uniqueArrayByCommon = Array.from(new Set(output.map((item) => item.common)));
+    }
+    for (const item of uniqueArrayByCommon) {
+        const membersContainingDuplicates = output
+            .filter((x) => x.common === item)
+            .map((x) => x.members)
+            .flat();
+        if (includeSingleElementMembers === true) {
+            newOutput.push({
+                common: item,
+                members: Array.from(new Set(membersContainingDuplicates.length > 0
+                    ? membersContainingDuplicates
+                    : [inputStrings.indexOf(item)])),
+            });
+        }
+        else {
+            newOutput.push({
+                common: item,
+                members: Array.from(new Set(membersContainingDuplicates)),
+            });
+        }
+    }
+    if (!includeSingleElementMembers) {
+        newOutput = newOutput.filter((x) => x.members.length > 1);
+    }
     return newOutput;
 };
 exports.default = autoGroupStrings;

@@ -1,6 +1,6 @@
 {
   "name": "auto-group-strings",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "description": "Small JS library to group array of strings by common substring",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -9,6 +9,9 @@
     "build:browser": "browserify -s autoGroupStrings src/index.ts -p [ tsify ] > dist/auto-group-strings.js && terser --compress --mangle -o dist/auto-group-strings.min.js dist/auto-group-strings.js",
     "test": "jest --config jestconfig.json",
     "coverage": "jest --config jestconfig.json --coverage"
+  },
+  "engines": {
+    "node": ">=12"
   },
   "repository": {
     "type": "git",

@@ -2,16 +2,21 @@ const autoGroupStrings = (
   inputStrings: string[],
   {
     delimiter,
+    delimiterRegExp,
     direction,
     caseSensitive,
+    includeSingleElementMembers,
   }: {
     delimiter?: string;
+    delimiterRegExp?: RegExp;
     direction?: "ltr" | "rtl";
     caseSensitive?: boolean;
+    includeSingleElementMembers?: boolean;
   } = {
     delimiter: " ",
     direction: "rtl",
     caseSensitive: false,
+    includeSingleElementMembers: false,
   },
 ): { common: string; members: number[] }[] | [] => {
   if (typeof delimiter === "undefined") {
@@ -35,8 +40,21 @@ const autoGroupStrings = (
   }[] = [];
 
   for (let i = 0; i < len; i++) {
+    if (delimiterRegExp instanceof RegExp) {
+      const match = inputStrings[i].match(delimiterRegExp);
+
+      delimiter = (match && match[0]) || delimiter;
+    }
+
     if (direction === "rtl") {
-      const words = inputStrings[i].split(delimiter).slice().reverse();
+      let words = inputStrings[i]
+        .split(delimiterRegExp || delimiter)
+        .slice()
+        .reverse();
+
+      if (delimiterRegExp instanceof RegExp && words.length === 1) {
+        words = inputStrings[i].split(delimiter).slice().reverse();
+      }
 
       if (!output.find((x) => x.common === words[0])) {
         output.push({
@@ -97,7 +115,11 @@ const autoGroupStrings = (
       output[index].prevWords.push(words);
     } else {
       // code for ltr
-      const words = inputStrings[i].split(delimiter);
+      let words = inputStrings[i].split(delimiterRegExp || delimiter);
+
+      if (delimiterRegExp instanceof RegExp && words.length === 1) {
+        words = inputStrings[i].split(delimiter);
+      }
 
       if (!output.find((x) => x.common === words[0])) {
         output.push({
@@ -156,27 +178,51 @@ const autoGroupStrings = (
     }
   }
 
-  let newOutput = [];
+  let newOutput: {
+    common: string;
+    members: number[];
+  }[] = [];
 
-  const uniqueArrayByCommon = Array.from(
-    new Set(output.map((item) => item.common)),
-  );
+  let uniqueArrayByCommon: string[];
 
-  for (const item of uniqueArrayByCommon) {
-    newOutput.push({
-      common: item,
-      members: Array.from(
-        new Set(
-          output
-            .filter((x) => x.common === item)
-            .map((x) => x.members)
-            .flat(),
-        ),
-      ),
-    });
+  if (includeSingleElementMembers === true) {
+    uniqueArrayByCommon = Array.from(
+      new Set(output.map((item) => item.common).concat(inputStrings)),
+    );
+  } else {
+    uniqueArrayByCommon = Array.from(
+      new Set(output.map((item) => item.common)),
+    );
   }
 
-  newOutput = newOutput.filter((x) => x.members.length > 1);
+  for (const item of uniqueArrayByCommon) {
+    const membersContainingDuplicates = output
+      .filter((x) => x.common === item)
+      .map((x) => x.members)
+      .flat();
+
+    if (includeSingleElementMembers === true) {
+      newOutput.push({
+        common: item,
+        members: Array.from(
+          new Set(
+            membersContainingDuplicates.length > 0
+              ? membersContainingDuplicates
+              : [inputStrings.indexOf(item)],
+          ),
+        ),
+      });
+    } else {
+      newOutput.push({
+        common: item,
+        members: Array.from(new Set(membersContainingDuplicates)),
+      });
+    }
+  }
+
+  if (!includeSingleElementMembers) {
+    newOutput = newOutput.filter((x) => x.members.length > 1);
+  }
 
   return newOutput;
 };
