@@ -14,20 +14,24 @@ Use `auto-group-strings.min.js` file from [dist/](dist/)
 
 ### Function Arguments:
 
-1. inputStrings, type: `Array<string>`
+1. inputStrings (type: `Array<string>`)
 
 2. options, type: `Object` (optional), properties:
-    - delimiter (default: `" "`)
-    - direction (default: `"rtl"`)
+    - **delimiter** (type: `string`, default: `" "`)
+    - **delimiterRegExp** (type: `RegExp`, default: `undefined`)
+      - if **delimiterRegExp** is provided, **delimiter** (`string`) will only be used as a fallback when there is no match for **delimiterRegExp**
+    - **direction** (type: `string`, default: `"rtl"`)
       <br>
-      Its possible values are `"ltr"` for searching left to right or, `"rtl"` for right to left.
-    - caseSensitive (default: `false`)
+      - Its possible values are `"ltr"` for searching left to right or, `"rtl"` for right to left.
+    - **caseSensitive** (type: `boolean`, default: `false`)
+    - **includeSingleElementMembers** (type: `boolean`, default: `false`)
+      - this option includes every input string from the first argument as **common** and at least one element (index) in **members** array. 
 
 ### Return Type:
 
 - `Array<Object>` where
-    - `common` property is a `string`
-    - `members` property is an `Array<number>`
+    - **`common`** property is a `string`
+    - **`members`** property is an `Array<number>`
 
 ## Usage
 
@@ -57,3 +61,5 @@ console.log(result);
 ]
 */
 ```
+
+- For more examples, please check [examples](examples/) directory.
