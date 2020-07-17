@@ -4,14 +4,17 @@ const autoGroupStrings = (
     delimiter,
     direction,
     caseSensitive,
+    includeSingleElementMembers,
   }: {
     delimiter?: string;
     direction?: "ltr" | "rtl";
     caseSensitive?: boolean;
+    includeSingleElementMembers?: boolean;
   } = {
     delimiter: " ",
     direction: "rtl",
     caseSensitive: false,
+    includeSingleElementMembers: false,
   },
 ): { common: string; members: number[] }[] | [] => {
   if (typeof delimiter === "undefined") {
@@ -156,27 +159,51 @@ const autoGroupStrings = (
     }
   }
 
-  let newOutput = [];
+  let newOutput: {
+    common: string;
+    members: number[];
+  }[] = [];
 
-  const uniqueArrayByCommon = Array.from(
-    new Set(output.map((item) => item.common)),
-  );
+  let uniqueArrayByCommon: string[];
 
-  for (const item of uniqueArrayByCommon) {
-    newOutput.push({
-      common: item,
-      members: Array.from(
-        new Set(
-          output
-            .filter((x) => x.common === item)
-            .map((x) => x.members)
-            .flat(),
-        ),
-      ),
-    });
+  if (includeSingleElementMembers === true) {
+    uniqueArrayByCommon = Array.from(
+      new Set(output.map((item) => item.common).concat(inputStrings)),
+    );
+  } else {
+    uniqueArrayByCommon = Array.from(
+      new Set(output.map((item) => item.common)),
+    );
   }
 
-  newOutput = newOutput.filter((x) => x.members.length > 1);
+  for (const item of uniqueArrayByCommon) {
+    const membersContainingDuplicates = output
+      .filter((x) => x.common === item)
+      .map((x) => x.members)
+      .flat();
+
+    if (includeSingleElementMembers === true) {
+      newOutput.push({
+        common: item,
+        members: Array.from(
+          new Set(
+            membersContainingDuplicates.length > 0
+              ? membersContainingDuplicates
+              : [inputStrings.indexOf(item)],
+          ),
+        ),
+      });
+    } else {
+      newOutput.push({
+        common: item,
+        members: Array.from(new Set(membersContainingDuplicates)),
+      });
+    }
+  }
+
+  if (!includeSingleElementMembers) {
+    newOutput = newOutput.filter((x) => x.members.length > 1);
+  }
 
   return newOutput;
 };
